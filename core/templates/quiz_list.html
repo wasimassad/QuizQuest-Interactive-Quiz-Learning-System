@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Available Quizzes – QuizQuest</title>
+</head>
+<body>
+  <h1>Available Quizzes</h1>
+  <p>Logged in as {{ request.user.username }}</p>
+
+  <ul>
+    {% for quiz in quizzes %}
+      <li>
+        <strong>{{ quiz.title }}</strong><br>
+        {{ quiz.description }}<br>
+        <a href="{% url 'take_quiz' quiz.id %}">Take this quiz</a>
+      </li>
+    {% empty %}
+      <li>No quizzes available yet.</li>
+    {% endfor %}
+  </ul>
+
+  <p><a href="{% url 'dashboard' %}">Back to dashboard</a></p>
+</body>
+</html>

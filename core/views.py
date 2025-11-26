@@ -6,6 +6,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Profile
+from .models import Quiz, Question, Choice, QuizSubmission, Answer
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+
 
 
 def home(request):
@@ -77,3 +82,47 @@ def is_admin(user):
 def admin_dashboard_view(request):
     # basic admin-only page
     return render(request, 'admin_dashboard.html')
+
+@login_required
+def quiz_list_view(request):
+    quizzes = Quiz.objects.filter(is_active=True).order_by('-created_at')
+    return render(request, 'quiz_list.html', {'quizzes': quizzes})
+
+@login_required
+@transaction.atomic
+def take_quiz_view(request, quiz_id):
+    quiz = get_object_or_404(Quiz, pk=quiz_id, is_active=True)
+    questions = quiz.questions.prefetch_related('choices')
+
+    if request.method == 'POST':
+        # Create submission
+        submission = QuizSubmission.objects.create(user=request.user, quiz=quiz)
+
+        total_score = 0
+        for question in questions:
+            field_name = f"question_{question.id}"
+            choice_id = request.POST.get(field_name)
+            choice_obj = None
+            if choice_id:
+                choice_obj = Choice.objects.get(pk=choice_id)
+                if choice_obj.is_correct:
+                    total_score += question.points
+
+            Answer.objects.create(
+                submission=submission,
+                question=question,
+                selected_choice=choice_obj
+            )
+
+        submission.score = total_score
+        submission.save()
+
+        return render(request, 'quiz_result.html', {
+            'quiz': quiz,
+            'submission': submission,
+        })
+
+    return render(request, 'take_quiz.html', {
+        'quiz': quiz,
+        'questions': questions,
+    })
