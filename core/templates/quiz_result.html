@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ quiz.title }} – Result</title>
+</head>
+<body>
+  <h1>{{ quiz.title }} – Result</h1>
+  <p>You scored: {{ submission.score }}</p>
+  <p>Submitted at: {{ submission.submitted_at }}</p>
+
+  <p><a href="{% url 'quiz_list' %}">Back to quizzes</a></p>
+</body>
+</html>
