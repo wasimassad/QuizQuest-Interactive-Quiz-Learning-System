@@ -25,8 +25,8 @@ class UserModelTest(TestCase):
             role=self.standard_role
         )
         self.assertEqual(user.username, 'testuser')
-        self.assertTrue(user.is_standard())
-        self.assertFalse(user.is_admin())
+        self.assertTrue(user.is_standard)
+        self.assertFalse(user.is_admin)
     
     def test_admin_role(self):
         """Test user with admin role."""
@@ -36,8 +36,8 @@ class UserModelTest(TestCase):
             password='adminpass123',
             role=self.admin_role
         )
-        self.assertTrue(user.is_admin())
-        self.assertFalse(user.is_standard())
+        self.assertTrue(user.is_admin)
+        self.assertFalse(user.is_standard)
 
 
 class QuestionModelTest(TestCase):

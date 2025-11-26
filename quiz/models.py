@@ -44,10 +44,12 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    @property
     def is_admin(self):
         """Check if user has admin role."""
         return self.role and self.role.name == Role.ADMIN
     
+    @property
     def is_standard(self):
         """Check if user has standard role."""
         return self.role and self.role.name == Role.STANDARD
