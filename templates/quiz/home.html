@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - QuizQuest{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded-3">
+    <h1 class="display-4">Welcome to QuizQuest!</h1>
+    <p class="lead">An interactive quiz learning platform to test and expand your knowledge.</p>
+    <hr class="my-4">
+    <p>We have {{ questions_count }} questions available for you to explore.</p>
+    {% if user.is_authenticated %}
+    <a class="btn btn-primary btn-lg" href="{% url 'question_list' %}" role="button">Browse Questions</a>
+    {% else %}
+    <a class="btn btn-primary btn-lg me-2" href="{% url 'login' %}" role="button">Login</a>
+    <a class="btn btn-outline-primary btn-lg" href="{% url 'register' %}" role="button">Register</a>
+    {% endif %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Learn</h5>
+                <p class="card-text">Access a wide variety of quiz questions across different categories and difficulty levels.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Practice</h5>
+                <p class="card-text">Test your knowledge with our interactive quizzes and track your progress over time.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Improve</h5>
+                <p class="card-text">Review your answers, learn from mistakes, and continuously improve your skills.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

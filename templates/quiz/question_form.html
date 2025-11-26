@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Question - QuizQuest{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'question_list' %}" class="btn btn-outline-secondary">&larr; Back to Questions</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">{{ action }} Question</h4>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.title.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_content" class="form-label">Question Content</label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.content.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_option_a" class="form-label">Option A</label>
+                    {{ form.option_a }}
+                    {% if form.option_a.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.option_a.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_option_b" class="form-label">Option B</label>
+                    {{ form.option_b }}
+                    {% if form.option_b.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.option_b.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_option_c" class="form-label">Option C</label>
+                    {{ form.option_c }}
+                    {% if form.option_c.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.option_c.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_option_d" class="form-label">Option D</label>
+                    {{ form.option_d }}
+                    {% if form.option_d.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.option_d.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="id_correct_answer" class="form-label">Correct Answer</label>
+                    {{ form.correct_answer }}
+                    {% if form.correct_answer.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.correct_answer.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_difficulty" class="form-label">Difficulty</label>
+                    {{ form.difficulty }}
+                    {% if form.difficulty.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.difficulty.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_category" class="form-label">Category</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.category.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Question Image (Optional)</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.image.errors|join:", " }}
+                </div>
+                {% endif %}
+                {% if question.image %}
+                <div class="mt-2">
+                    <p>Current image:</p>
+                    <img src="{{ question.image.url }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px;">
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors|join:", " }}
+            </div>
+            {% endif %}
+            
+            <button type="submit" class="btn btn-primary">{{ action }} Question</button>
+            <a href="{% url 'question_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

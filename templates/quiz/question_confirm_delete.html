@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Question - QuizQuest{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'question_list' %}" class="btn btn-outline-secondary">&larr; Back to Questions</a>
+</div>
+
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">Confirm Delete</h4>
+    </div>
+    <div class="card-body">
+        <p class="lead">Are you sure you want to delete the following question?</p>
+        
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ question.title }}</h5>
+                <p>{{ question.content }}</p>
+                <small class="text-muted">Created on {{ question.created_at|date:"M d, Y" }}</small>
+            </div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'question_detail' question.pk %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
