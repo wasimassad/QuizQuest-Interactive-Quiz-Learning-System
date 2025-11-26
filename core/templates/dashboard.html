@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Dashboard – QuizQuest</title>
+</head>
+<body>
+  <h1>Hi {{ request.user.username }}, welcome to your dashboard.</h1>
+  <p>Your role: {{ request.user.profile.role }}</p>
+
+  <p>
+    <a href="{% url 'admin_dashboard' %}">Admin dashboard</a> (Admins only)
+  </p>
+
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+</body>
+</html>
