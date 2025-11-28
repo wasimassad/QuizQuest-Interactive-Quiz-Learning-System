@@ -1,327 +1,177 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}QuizQuest{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}QuizQuest{% endblock %}</title>
 
-    <style>
-        :root {
-            --bg: #050816;
-            --bg-alt: #0b1020;
-            --card: #111827;
-            --accent: #38bdf8;
-            --accent-soft: rgba(56, 189, 248, 0.12);
-            --text: #e5e7eb;
-            --muted: #9ca3af;
-            --danger: #f97373;
-        }
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
 
-        * { box-sizing: border-box; }
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+    }
 
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top left, #1f2937 0, var(--bg) 40%, #020617 100%);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    .navbar {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      backdrop-filter: blur(10px);
+    }
 
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+    a.nav-link,
+    .navbar-brand {
+      color: #e5e7eb !important;
+    }
 
-        .qq-nav {
-            backdrop-filter: blur(14px);
-            background: rgba(15,23,42,0.85);
-            border-bottom: 1px solid rgba(148,163,184,0.18);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
+    a.nav-link:hover,
+    .navbar-brand:hover {
+      color: #38bdf8 !important;
+    }
 
-        .qq-nav-inner {
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 0.9rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border: none;
+    }
 
-        .qq-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            color: #f9fafb;
-            letter-spacing: 0.06em;
-        }
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .qq-brand-badge {
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 20%, #facc15 0, #f97316 40%, #e11d48 75%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: #0b1020;
-            box-shadow: 0 0 0 2px rgba(15,23,42,0.7), 0 14px 45px rgba(234,179,8,0.35);
-        }
+    main {
+      flex: 1 0 auto;
+    }
 
-        .qq-nav-links {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            font-size: 0.95rem;
-        }
-
-        .qq-nav-link {
-            color: var(--muted);
-        }
-
-        .qq-nav-link-active {
-            color: #e5e7eb;
-            font-weight: 600;
-        }
-
-        .qq-nav-btn {
-            padding: 0.45rem 0.9rem;
-            border-radius: 999px;
-            border: 1px solid rgba(148,163,184,0.55);
-            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(15,23,42,0.3));
-            color: var(--text);
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .qq-nav-btn span {
-            display: inline-block;
-            font-size: 0.75rem;
-            opacity: 0.85;
-        }
-
-        .qq-main {
-            flex: 1;
-            max-width: 1120px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 3rem;
-        }
-
-        .qq-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-            gap: 1.75rem;
-        }
-
-        .qq-card {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12) 0, rgba(15,23,42,0.9) 40%);
-            border-radius: 1.25rem;
-            padding: 1.5rem 1.75rem;
-            border: 1px solid rgba(148,163,184,0.2);
-            box-shadow: 0 20px 45px rgba(15,23,42,0.85);
-        }
-
-        .qq-card-soft {
-            background: rgba(15,23,42,0.95);
-        }
-
-        .qq-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.18rem 0.7rem;
-            border-radius: 999px;
-            background: rgba(15,23,42,0.85);
-            border: 1px solid rgba(148,163,184,0.4);
-            font-size: 0.72rem;
-            color: var(--muted);
-        }
-
-        .qq-pill-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 999px;
-            background: #22c55e;
-            box-shadow: 0 0 0 4px rgba(34,197,94,0.32);
-        }
-
-        .qq-heading {
-            font-size: 1.9rem;
-            font-weight: 700;
-            margin: 0.75rem 0 0.35rem;
-        }
-
-        .qq-sub {
-            font-size: 0.96rem;
-            color: var(--muted);
-            max-width: 36rem;
-        }
-
-        .qq-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-            margin-top: 1.3rem;
-        }
-
-        .qq-btn-primary {
-            padding: 0.7rem 1.3rem;
-            border-radius: 999px;
-            border: none;
-            background: linear-gradient(135deg, #38bdf8, #6366f1);
-            color: #0b1020;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 16px 35px rgba(56,189,248,0.35);
-        }
-
-        .qq-btn-primary:hover { filter: brightness(1.05); }
-
-        .qq-btn-ghost {
-            padding: 0.7rem 1.25rem;
-            border-radius: 999px;
-            border: 1px solid rgba(148,163,184,0.5);
-            background: rgba(15,23,42,0.6);
-            color: var(--text);
-            font-weight: 500;
-            font-size: 0.92rem;
-            cursor: pointer;
-        }
-
-        .qq-kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.8rem;
-            margin-top: 1.2rem;
-        }
-
-        .qq-kpi {
-            background: rgba(15,23,42,0.75);
-            border-radius: 0.9rem;
-            padding: 0.8rem 1rem;
-            border: 1px solid rgba(148,163,184,0.2);
-        }
-
-        .qq-kpi-label {
-            font-size: 0.75rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .qq-kpi-value {
-            font-size: 1.1rem;
-            margin-top: 0.15rem;
-        }
-
-        .qq-kpi-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.2rem;
-            padding: 0.05rem 0.5rem;
-            border-radius: 999px;
-            background: rgba(34,197,94,0.12);
-            color: #4ade80;
-            font-size: 0.7rem;
-        }
-
-        .qq-list {
-            list-style: none;
-            padding: 0;
-            margin: 0.8rem 0 0;
-        }
-
-        .qq-list li {
-            padding: 0.5rem 0.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed rgba(31,41,55,0.9);
-            font-size: 0.9rem;
-        }
-
-        .qq-list-label {
-            color: var(--muted);
-        }
-
-        .qq-badge-role {
-            padding: 0.15rem 0.55rem;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.09em;
-            border: 1px solid rgba(148,163,184,0.55);
-        }
-
-        .qq-badge-role-student {
-            background: rgba(56,189,248,0.12);
-            color: #38bdf8;
-        }
-
-        .qq-badge-role-admin {
-            background: rgba(249,115,22,0.12);
-            color: #fb923c;
-        }
-
-        .qq-footer {
-            border-top: 1px solid rgba(15,23,42,0.9);
-            background: #020617;
-            font-size: 0.78rem;
-            color: var(--muted);
-            padding: 0.75rem 1.5rem;
-            text-align: center;
-        }
-
-        @media (max-width: 900px) {
-            .qq-main { padding-top: 1.5rem; }
-            .qq-grid { grid-template-columns: 1fr; }
-            .qq-heading { font-size: 1.5rem; }
-            .qq-nav-inner { padding-inline: 1rem; }
-        }
-    </style>
-
-    {% block extra_head %}{% endblock %}
+    footer {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.25);
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
-<header class="qq-nav">
-    <div class="qq-nav-inner">
-        <a href="{% url 'home' %}" class="qq-brand">
-            <div class="qq-brand-badge">Q</div>
-            <span>QuizQuest</span>
-        </a>
-        <div class="qq-nav-links">
-            <a href="{% url 'home' %}" class="qq-nav-link">Home</a>
-            <a href="{% url 'quiz_list' %}" class="qq-nav-link">Quizzes</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="qq-nav-link qq-nav-link-active">Dashboard</a>
-                <a href="{% url 'logout' %}" class="qq-nav-btn">
-                    Logout
-                    <span>({{ user.username }})</span>
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}" class="qq-nav-btn"><span>Login</span></a>
-            {% endif %}
-        </div>
+<div class="page-wrapper">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container py-2">
+      <a class="navbar-brand fw-semibold" href="{% url 'home' %}">
+        QuizQuest
+      </a>
+      <button
+        class="navbar-toggler text-white border-0"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        ☰
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'quiz_list' %}">Quizzes</a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item me-2 d-flex align-items-center text-secondary">
+              Hello,&nbsp;<strong>{{ user.username }}</strong>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}">
+                Logout
+              </a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="btn btn-sm btn-outline-light me-2" href="{% url 'login' %}">
+                Login
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-sm btn-primary" href="{% url 'register' %}">
+                Register
+              </a>
+            </li>
+          {% endif %}
+          <li class="nav-item ms-3">
+            <a class="btn btn-sm btn-secondary" href="/admin/">
+              Admin
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-</header>
+  </nav>
 
-<main class="qq-main">
-    {% block content %}{% endblock %}
-</main>
+  <!-- MAIN CONTENT -->
+  <main class="py-4">
+    <div class="container">
+      <!-- Django messages -->
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags|default:'info' }} mb-2"
+              role="alert"
+            >
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-<footer class="qq-footer">
-    QuizQuest – Interactive Quiz &amp; Learning System • {{ request.user.username|default:"Guest" }}
-</footer>
+      {% block content %}
+      <!-- page-specific content goes here -->
+      {% endblock %}
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="py-3">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <span>© 2025 QuizQuest. Built with Django.</span>
+      <span>
+        <a
+          href="https://github.com/wasimassad/QuizQuest-Interactive-Quiz-Learning-System"
+          target="_blank"
+          class="text-decoration-none text-info"
+        >
+          GitHub repository
+        </a>
+      </span>
+    </div>
+  </footer>
+</div>
+
+<!-- Bootstrap JS -->
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"
+></script>
 </body>
 </html>
