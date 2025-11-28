@@ -1,12 +1,88 @@
 {% extends "admin/base.html" %}
+{% load static %}
 
 {% block title %}QuizQuest administration{% endblock %}
 
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    body.login {
+      background: #020617;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #container {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    #content {
+      padding-top: 1rem;
+    }
+
+    .login #container {
+      max-width: 420px;
+    }
+
+    #header {
+      background: #0f172a;
+      border-bottom: 1px solid rgba(148,163,184,.4);
+    }
+
+    #header h1 a {
+      color: #e5e7eb;
+      font-weight: 600;
+      letter-spacing: .03em;
+      text-decoration: none;
+    }
+
+    .login #content-main {
+      background: #020617;
+      border-radius: 1rem;
+      padding: 2rem;
+      border: 1px solid rgba(148,163,184,.2);
+      box-shadow: 0 18px 40px rgba(15,23,42,.9);
+    }
+
+    .login .form-row label {
+      color: #e5e7eb;
+    }
+
+    .login .form-row input {
+      background: #020617;
+      border: 1px solid rgba(148,163,184,.5);
+      color: #e5e7eb;
+      border-radius: .6rem;
+    }
+
+    .login .form-row input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px #38bdf8;
+    }
+
+    .submit-row input {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border: none;
+      border-radius: .75rem;
+      padding-inline: 2.5rem;
+      font-weight: 600;
+    }
+
+    .submit-row input:hover {
+      opacity: .9;
+    }
+
+    .messagelist li {
+      background: #166534;
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+  </style>
+{% endblock %}
+
 {% block branding %}
   <h1 id="site-name">
-    <a href="{% url 'admin:index' %}" style="color:#f9fafb; text-decoration:none;">
-      QuizQuest administration
-    </a>
+    <a href="{% url 'admin:index' %}">QuizQuest administration</a>
   </h1>
 {% endblock %}
 
