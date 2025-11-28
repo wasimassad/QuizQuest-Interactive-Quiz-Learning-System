@@ -1,16 +1,103 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>User Dashboard – QuizQuest</title>
-</head>
-<body>
-  <h1>Hi {{ request.user.username }}, welcome to your dashboard.</h1>
-  <p>Your role: {{ request.user.profile.role }}</p>
+{% extends "base.html" %}
 
-  <p>
-    <a href="{% url 'admin_dashboard' %}">Admin dashboard</a> (Admins only)
-  </p>
-  <p><a href="{% url 'quiz_list' %}">View available quizzes</a></p>
-  <p><a href="{% url 'logout' %}">Logout</a></p>
-</body>
-</html>
+{% block title %}Dashboard – QuizQuest{% endblock %}
+
+{% block content %}
+<div class="qq-grid">
+    <!-- Left: main greeting / actions -->
+    <section class="qq-card">
+        <div class="qq-pill">
+            <span class="qq-pill-dot"></span>
+            Personal dashboard
+        </div>
+
+        <h1 class="qq-heading">
+            Hi {{ user.first_name|default:user.username }}, welcome back 👋
+        </h1>
+
+        <p class="qq-sub">
+            You’re logged in as
+            {% if profile.role == "ADMIN" %}
+                <span class="qq-badge-role qq-badge-role-admin">Admin</span>
+            {% else %}
+                <span class="qq-badge-role qq-badge-role-student">Student</span>
+            {% endif %}
+            . Use the shortcuts below to jump into quizzes or view your activity.
+        </p>
+
+        <div class="qq-row">
+            <a href="{% url 'quiz_list' %}">
+                <button class="qq-btn-primary">Browse available quizzes</button>
+            </a>
+
+            {% if profile.role == "ADMIN" %}
+                <a href="{% url 'admin_dashboard' %}">
+                    <button class="qq-btn-ghost">Open admin dashboard</button>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="qq-kpi-grid">
+            <div class="qq-kpi">
+                <div class="qq-kpi-label">Role</div>
+                <div class="qq-kpi-value">
+                    {% if profile.role == "ADMIN" %}Admin{% else %}Student{% endif %}
+                </div>
+                <div class="qq-kpi-pill">
+                    • Active session
+                </div>
+            </div>
+
+            <div class="qq-kpi">
+                <div class="qq-kpi-label">Quizzes available</div>
+                <div class="qq-kpi-value">{{ quizzes_available|default:"-" }}</div>
+                <div class="qq-kpi-pill">
+                    {% if quizzes_available %}Ready to take{% else %}Ask your instructor{% endif %}
+                </div>
+            </div>
+
+            <div class="qq-kpi">
+                <div class="qq-kpi-label">Quizzes completed</div>
+                <div class="qq-kpi-value">{{ quizzes_completed|default:"0" }}</div>
+                <div class="qq-kpi-pill">
+                    Keep going 💪
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Right: recent activity -->
+    <aside class="qq-card qq-card-soft">
+        <h2 style="margin:0 0 0.4rem;font-size:1.05rem;">Recent activity</h2>
+        <p class="qq-sub" style="font-size:0.86rem;">
+            Quick snapshot of the latest actions on your account.
+        </p>
+
+        <ul class="qq-list">
+            <li>
+                <span class="qq-list-label">Logged in as</span>
+                <span>{{ user.username }}</span>
+            </li>
+            <li>
+                <span class="qq-list-label">Role</span>
+                <span>
+                    {% if profile.role == "ADMIN" %}Admin{% else %}Student{% endif %}
+                </span>
+            </li>
+            <li>
+                <span class="qq-list-label">Last quiz taken</span>
+                <span>{{ last_quiz_title|default:"–" }}</span>
+            </li>
+            <li>
+                <span class="qq-list-label">Last score</span>
+                <span>{{ last_quiz_score|default:"–" }}</span>
+            </li>
+        </ul>
+
+        <div style="margin-top:1.4rem;font-size:0.8rem;color:var(--muted);">
+            Need admin tools? Use the Django admin:
+            <a href="/admin/">/admin/</a>
+        </div>
+    </aside>
+</div>
+{% endblock %}

@@ -1,12 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Admin Dashboard – QuizQuest</title>
-</head>
-<body>
-  <h1>Admin Dashboard</h1>
-  <p>Only users with the Admin role can see this page.</p>
+{% extends "base.html" %}
 
-  <p><a href="{% url 'dashboard' %}">Back to user dashboard</a></p>
-</body>
-</html>
+{% block title %}Admin Dashboard – QuizQuest{% endblock %}
+
+{% block content %}
+<section class="qq-card">
+    <div class="qq-pill">
+        <span class="qq-pill-dot"></span>
+        Admin overview
+    </div>
+
+    <h1 class="qq-heading" style="font-size:1.6rem;">Admin dashboard</h1>
+    <p class="qq-sub">
+        Manage quizzes, review student activity, and jump to Django admin tools.
+    </p>
+
+    <div class="qq-kpi-grid">
+        <div class="qq-kpi">
+            <div class="qq-kpi-label">Total quizzes</div>
+            <div class="qq-kpi-value">{{ total_quizzes|default:"-" }}</div>
+        </div>
+        <div class="qq-kpi">
+            <div class="qq-kpi-label">Total submissions</div>
+            <div class="qq-kpi-value">{{ total_submissions|default:"-" }}</div>
+        </div>
+        <div class="qq-kpi">
+            <div class="qq-kpi-label">Registered users</div>
+            <div class="qq-kpi-value">{{ total_users|default:"-" }}</div>
+        </div>
+    </div>
+
+    <div class="qq-row" style="margin-top:1.6rem;">
+        <a href="/admin/">
+            <button class="qq-btn-primary">Open Django admin</button>
+        </a>
+        <a href="{% url 'quiz_list' %}">
+            <button class="qq-btn-ghost">View public quizzes</button>
+        </a>
+    </div>
+</section>
+{% endblock %}

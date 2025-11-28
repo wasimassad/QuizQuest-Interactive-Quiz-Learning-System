@@ -1,28 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{{ quiz.title }} – Take Quiz</title>
-</head>
-<body>
-  <h1>{{ quiz.title }}</h1>
-  <p>{{ quiz.description }}</p>
+{% extends "base.html" %}
 
-  <form method="post">
-    {% csrf_token %}
-    {% for question in questions %}
-      <div style="margin-bottom: 20px;">
-        <strong>Q{{ forloop.counter }}. {{ question.text }}</strong> ({{ question.points }} pts)<br>
-        {% for choice in question.choices.all %}
-          <label>
-            <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}">
-            {{ choice.text }}
-          </label><br>
+{% block title %}{{ quiz.title }} – Take Quiz{% endblock %}
+
+{% block content %}
+<section class="qq-card">
+    <div class="qq-pill">
+        <span class="qq-pill-dot"></span>
+        Taking quiz
+    </div>
+
+    <h1 class="qq-heading" style="font-size:1.6rem;">{{ quiz.title }}</h1>
+    <p class="qq-sub">{{ quiz.description }}</p>
+
+    <form method="post" style="margin-top:1.3rem;">
+        {% csrf_token %}
+
+        {% for question in questions %}
+            <div style="margin-bottom:1.2rem;padding:0.9rem 1rem;border-radius:0.9rem;background:rgba(15,23,42,0.8);border:1px solid rgba(55,65,81,0.8);">
+                <div style="font-size:0.9rem;color:var(--muted);margin-bottom:0.3rem;">
+                    Question {{ forloop.counter }} • {{ question.points }} point{{ question.points|pluralize }}
+                </div>
+                <div style="margin-bottom:0.5rem;font-weight:500;">{{ question.text }}</div>
+
+                {% for choice in question.choices.all %}
+                    <label style="display:block;font-size:0.9rem;margin-top:0.25rem;cursor:pointer;">
+                        <input type="radio"
+                               name="question_{{ question.id }}"
+                               value="{{ choice.id }}"
+                               style="margin-right:0.5rem;">
+                        {{ choice.text }}
+                    </label>
+                {% endfor %}
+            </div>
         {% endfor %}
-      </div>
-    {% endfor %}
-    <button type="submit">Submit Quiz</button>
-  </form>
 
-  <p><a href="{% url 'quiz_list' %}">Back to quizzes</a></p>
-</body>
-</html>
+        <button type="submit" class="qq-btn-primary">
+            Submit quiz
+        </button>
+    </form>
+</section>
+{% endblock %}
