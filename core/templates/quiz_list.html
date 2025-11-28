@@ -1,24 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Available Quizzes – QuizQuest</title>
-</head>
-<body>
-  <h1>Available Quizzes</h1>
-  <p>Logged in as {{ request.user.username }}</p>
+{% extends "base.html" %}
 
-  <ul>
-    {% for quiz in quizzes %}
-      <li>
-        <strong>{{ quiz.title }}</strong><br>
-        {{ quiz.description }}<br>
-        <a href="{% url 'take_quiz' quiz.id %}">Take this quiz</a>
-      </li>
-    {% empty %}
-      <li>No quizzes available yet.</li>
-    {% endfor %}
-  </ul>
+{% block title %}Quizzes – QuizQuest{% endblock %}
 
-  <p><a href="{% url 'dashboard' %}">Back to dashboard</a></p>
-</body>
-</html>
+{% block content %}
+<section class="qq-card">
+    <div class="qq-pill">
+        <span class="qq-pill-dot"></span>
+        Available quizzes
+    </div>
+
+    <h1 class="qq-heading" style="font-size:1.6rem;">Pick a quiz to get started</h1>
+    <p class="qq-sub">
+        Choose any active quiz below. Your results will be recorded under your account
+        <strong>{{ user.username }}</strong>.
+    </p>
+
+    <div style="margin-top:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;">
+        {% for quiz in quizzes %}
+            <article class="qq-kpi" style="cursor:pointer;">
+                <div class="qq-kpi-label">Quiz</div>
+                <div class="qq-kpi-value" style="font-size:1rem;">{{ quiz.title }}</div>
+                <p style="margin:0.35rem 0 0.6rem;font-size:0.82rem;color:var(--muted);">
+                    {{ quiz.description|default:"No description provided." }}
+                </p>
+                <a href="{% url 'take_quiz' quiz.id %}">
+                    <button class="qq-btn-primary" style="padding:0.5rem 1rem;font-size:0.85rem;">
+                        Take this quiz
+                    </button>
+                </a>
+            </article>
+        {% empty %}
+            <p class="qq-sub">No quizzes are available yet. Please check back later.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

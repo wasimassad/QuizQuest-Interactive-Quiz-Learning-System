@@ -1,13 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{{ quiz.title }} – Result</title>
-</head>
-<body>
-  <h1>{{ quiz.title }} – Result</h1>
-  <p>You scored: {{ submission.score }}</p>
-  <p>Submitted at: {{ submission.submitted_at }}</p>
+{% extends "base.html" %}
 
-  <p><a href="{% url 'quiz_list' %}">Back to quizzes</a></p>
-</body>
-</html>
+{% block title %}{{ quiz.title }} – Result{% endblock %}
+
+{% block content %}
+<section class="qq-card">
+    <div class="qq-pill">
+        <span class="qq-pill-dot"></span>
+        Quiz result
+    </div>
+
+    <h1 class="qq-heading" style="font-size:1.7rem;">{{ quiz.title }}</h1>
+    <p class="qq-sub">
+        Great job, {{ request.user.first_name|default:request.user.username }}!
+        Here is your result for this quiz.
+    </p>
+
+    <div class="qq-kpi-grid" style="margin-top:1.4rem;">
+        <div class="qq-kpi">
+            <div class="qq-kpi-label">Score</div>
+            <div class="qq-kpi-value">{{ submission.score }}</div>
+            <div class="qq-kpi-pill">Recorded successfully</div>
+        </div>
+        <div class="qq-kpi">
+            <div class="qq-kpi-label">Submitted at</div>
+            <div class="qq-kpi-value" style="font-size:0.92rem;">
+                {{ submission.submitted_at }}
+            </div>
+        </div>
+    </div>
+
+    <div class="qq-row" style="margin-top:1.6rem;">
+        <a href="{% url 'quiz_list' %}">
+            <button class="qq-btn-ghost">Back to quizzes</button>
+        </a>
+        <a href="{% url 'dashboard' %}">
+            <button class="qq-btn-primary">Return to dashboard</button>
+        </a>
+    </div>
+</section>
+{% endblock %}
