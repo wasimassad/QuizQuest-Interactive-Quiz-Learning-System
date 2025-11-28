@@ -1,42 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register – QuizQuest</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register – QuizQuest</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+    }
+    .navbar {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      backdrop-filter: blur(10px);
+    }
+    a.nav-link, .navbar-brand {
+      color: #e5e7eb !important;
+    }
+    a.nav-link:hover, .navbar-brand:hover {
+      color: #38bdf8 !important;
+    }
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .card-auth {
+      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      max-width: 480px;
+      width: 100%;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      border: none;
+    }
+    .form-label {
+      color: #e5e7eb;
+    }
+    .text-muted {
+      color: #9ca3af !important;
+    }
+  </style>
 </head>
 <body>
-  <h1>Create an account</h1>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container py-2">
+      <a class="navbar-brand fw-semibold" href="{% url 'home' %}">QuizQuest</a>
+      <button
+        class="navbar-toggler text-white border-0"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        ☰
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-sm btn-outline-light ms-lg-3 mt-2 mt-lg-0" href="{% url 'login' %}">
+              Login
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-  {% if messages %}
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <!-- CONTENT -->
+  <div class="auth-wrapper">
+    <div class="card card-auth p-4 p-md-5 shadow-lg">
+      <h2 class="mb-3">Create an account</h2>
+      <p class="text-muted mb-4">
+        Register as a student or admin to start using QuizQuest.
+      </p>
 
-  <form method="post">
-    {% csrf_token %}
-    <label>Username:</label><br>
-    <input type="text" name="username" required><br><br>
+      {% if messages %}
+        <div class="mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-    <label>Email:</label><br>
-    <input type="email" name="email"><br><br>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_username" class="form-label">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="id_username"
+            class="form-control bg-dark text-light border-secondary"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="id_email" class="form-label">Email</label>
+          <input
+            type="email"
+            name="email"
+            id="id_email"
+            class="form-control bg-dark text-light border-secondary"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="id_password1" class="form-label">Password</label>
+          <input
+            type="password"
+            name="password1"
+            id="id_password1"
+            class="form-control bg-dark text-light border-secondary"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="id_password2" class="form-label">Confirm Password</label>
+          <input
+            type="password"
+            name="password2"
+            id="id_password2"
+            class="form-control bg-dark text-light border-secondary"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="id_role" class="form-label">Role</label>
+          <select
+            name="role"
+            id="id_role"
+            class="form-select bg-dark text-light border-secondary"
+          >
+            <option value="STUDENT" selected>Student</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
 
-    <label>Password:</label><br>
-    <input type="password" name="password1" required><br><br>
+        <button type="submit" class="btn btn-primary w-100 mt-2">
+          Create account
+        </button>
+      </form>
 
-    <label>Confirm Password:</label><br>
-    <input type="password" name="password2" required><br><br>
+      <p class="text-muted mt-4 mb-0 text-center">
+        Already have an account?
+        <a href="{% url 'login' %}" class="text-info text-decoration-none">Login</a>
+      </p>
+    </div>
+  </div>
 
-    <label>Role:</label><br>
-    <select name="role">
-      <option value="STUDENT">Student</option>
-      <option value="ADMIN">Admin</option>
-    </select><br><br>
-
-    <button type="submit">Register</button>
-  </form>
-
-  <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <!-- We already include admin_custom.css in base_site, so no extra CSS required here -->
+{% endblock %}
+
+{% block content %}
+<div class="qq-admin-login-wrapper">
+  <h1 class="qq-admin-login-title">QuizQuest Admin Login</h1>
+  <p class="qq-admin-login-subtitle">
+    Admins only • Use your staff credentials.
+  </p>
+
+  {% if form.errors %}
+    <p class="errornote">
+      {% blocktrans %}Please enter the correct username and password. Both fields may be case-sensitive.{% endblocktrans %}
+    </p>
+  {% endif %}
+
+  <form action="{{ form_url }}" method="post" id="login-form">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="form-row">
+      {{ form.username.label_tag }} {{ form.username }}
+    </div>
+    <div class="form-row">
+      {{ form.password.label_tag }} {{ form.password }}
+    </div>
+    <div class="submit-row">
+      <input type="submit" value="{% trans 'Log in' %}">
+    </div>
+  </form>
+</div>
+{% endblock %}
