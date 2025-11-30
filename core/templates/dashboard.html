@@ -4,292 +4,298 @@
 {% block title %}Dashboard – QuizQuest{% endblock %}
 
 {% block content %}
+
+<style>
+  /* ==============================
+     GLOBAL DASHBOARD STYLING FIXES
+     ============================== */
+
+  /* Make ALL card text visible on dark mode */
+  .dashboard-card,
+  .dashboard-card * {
+      color: #e5e7eb !important;
+  }
+
+  /* Summary numbers */
+  .stat-number {
+      color: #93c5fd !important;
+      font-weight: 700;
+      font-size: 2.6rem;
+      line-height: 1;
+  }
+
+  /* Card backgrounds */
+  .dashboard-card {
+      background-color: #0f172a !important;
+      border: 1px solid rgba(148, 163, 184, 0.25) !important;
+      border-radius: 0.75rem;
+  }
+
+  .table-dark td, 
+  .table-dark th {
+      color: #e5e7eb !important;
+  }
+</style>
+
+
+<!-- HEADER -->
 <div class="row mb-4">
   <div class="col-12">
     <h1 class="mb-2">Hi {{ user.username }}, welcome to your dashboard.</h1>
     <p class="text-secondary">
       Your role:
-      <span class="badge bg-info text-dark">
-        {{ role|default:"STUDENT" }}
-      </span>
+      <span class="badge bg-info text-dark">{{ role|default:"STUDENT" }}</span>
     </p>
   </div>
 </div>
 
 <div class="row g-4">
-  <!-- LEFT COLUMN: SUMMARY CARDS -->
+
+  <!-- LEFT COLUMN -->
   <div class="col-lg-8">
+
     {% if is_admin %}
-      <!-- ADMIN SUMMARY CARDS -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-3">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Users</h6>
-              <h3 class="mb-0">{{ total_users }}</h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Quizzes</h6>
-              <h3 class="mb-0">{{ total_quizzes }}</h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Questions</h6>
-              <h3 class="mb-0">{{ total_questions }}</h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Submissions</h6>
-              <h3 class="mb-0">{{ total_submissions }}</h3>
-            </div>
-          </div>
+    <!-- ============================
+         ADMIN DASHBOARD
+    ============================= -->
+
+    <!-- ADMIN SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Users</h6>
+          <div class="stat-number">{{ total_users }}</div>
         </div>
       </div>
 
-      <!-- LATEST QUIZZES -->
-      <div class="card bg-dark border-secondary mb-4">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Latest quizzes</h5>
-            <a href="{% url 'quiz_list' %}" class="small text-info text-decoration-none">
-              View all
-            </a>
-          </div>
-          {% if latest_quizzes %}
-            <div class="table-responsive">
-              <table class="table table-dark table-sm align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Active</th>
-                    <th>Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for quiz in latest_quizzes %}
-                    <tr>
-                      <td>{{ quiz.title }}</td>
-                      <td>
-                        {% if quiz.is_active %}
-                          <span class="badge bg-success">Active</span>
-                        {% else %}
-                          <span class="badge bg-secondary">Inactive</span>
-                        {% endif %}
-                      </td>
-                      <td>{{ quiz.created_at|date:"M d, Y H:i" }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <p class="text-secondary mb-0">No quizzes created yet.</p>
-          {% endif %}
+      <div class="col-md-3">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Quizzes</h6>
+          <div class="stat-number">{{ total_quizzes }}</div>
         </div>
       </div>
 
-      <!-- LATEST SUBMISSIONS -->
-      <div class="card bg-dark border-secondary">
-        <div class="card-body">
-          <h5 class="card-title mb-3">Latest submissions</h5>
-          {% if latest_submissions %}
-            <div class="table-responsive">
-              <table class="table table-dark table-sm align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Quiz</th>
-                    <th>Score</th>
-                    <th>Submitted</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for sub in latest_submissions %}
-                    <tr>
-                      <td>{{ sub.user.username }}</td>
-                      <td>{{ sub.quiz.title }}</td>
-                      <td>{{ sub.score }}</td>
-                      <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <p class="text-secondary mb-0">No quiz submissions yet.</p>
-          {% endif %}
+      <div class="col-md-3">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Questions</h6>
+          <div class="stat-number">{{ total_questions }}</div>
         </div>
       </div>
+
+      <div class="col-md-3">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Submissions</h6>
+          <div class="stat-number">{{ total_submissions }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LATEST QUIZZES -->
+    <div class="card dashboard-card p-4 mb-4">
+      <div class="d-flex justify-content-between mb-3">
+        <h5>Latest quizzes</h5>
+        <a href="{% url 'quiz_list' %}" class="text-info small">View all</a>
+      </div>
+
+      {% if latest_quizzes %}
+      <div class="table-responsive">
+        <table class="table table-dark table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Active</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for quiz in latest_quizzes %}
+            <tr>
+              <td>{{ quiz.title }}</td>
+              <td>
+                {% if quiz.is_active %}
+                <span class="badge bg-success">Active</span>
+                {% else %}
+                <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+              </td>
+              <td>{{ quiz.created_at|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-secondary">No quizzes yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- LATEST SUBMISSIONS -->
+    <div class="card dashboard-card p-4">
+      <h5 class="mb-3">Latest submissions</h5>
+
+      {% if latest_submissions %}
+      <div class="table-responsive">
+        <table class="table table-dark table-sm align-middle">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Quiz</th>
+              <th>Score</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in latest_submissions %}
+            <tr>
+              <td>{{ sub.user.username }}</td>
+              <td>{{ sub.quiz.title }}</td>
+              <td>{{ sub.score }}</td>
+              <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-secondary">No submissions yet.</p>
+      {% endif %}
+    </div>
 
     {% else %}
-      <!-- STUDENT SUMMARY CARDS -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Quizzes taken</h6>
-              <h3 class="mb-0">{{ quizzes_taken }}</h3>
-            </div>
-          </div>
+    <!-- ============================
+         STUDENT DASHBOARD
+    ============================= -->
+
+    <!-- STUDENT SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Quizzes taken</h6>
+          <div class="stat-number">{{ quizzes_taken }}</div>
         </div>
-        <div class="col-md-4">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Average score</h6>
-              <h3 class="mb-0">
-                {% if avg_score %}
-                  {{ avg_score|floatformat:1 }}
-                {% else %}
-                  –
-                {% endif %}
-              </h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card bg-dark border-secondary h-100">
-            <div class="card-body">
-              <h6 class="text-secondary text-uppercase small">Account</h6>
-              <p class="mb-0 small">
-                Member since {{ user.date_joined|date:"M d, Y" }}<br>
-                Email: {{ user.email|default:"not set" }}
-              </p>
-            </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Average score</h6>
+          <div class="stat-number">
+            {% if avg_score %}{{ avg_score|floatformat:1 }}{% else %}–{% endif %}
           </div>
         </div>
       </div>
 
-      <!-- RECENT ATTEMPTS -->
-      <div class="card bg-dark border-secondary mb-4">
-        <div class="card-body">
-          <h5 class="card-title mb-3">Recent quiz attempts</h5>
-          {% if latest_submissions %}
-            <div class="table-responsive">
-              <table class="table table-dark table-sm align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>Quiz</th>
-                    <th>Score</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for sub in latest_submissions %}
-                    <tr>
-                      <td>{{ sub.quiz.title }}</td>
-                      <td>{{ sub.score }}</td>
-                      <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <p class="text-secondary mb-0">
-              You haven’t taken any quizzes yet.  
-              <a href="{% url 'quiz_list' %}" class="text-info text-decoration-none">
-                Browse available quizzes
-              </a>
-              to get started.
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 h-100">
+          <h6 class="text-secondary text-uppercase small">Account</h6>
+          <p class="small mb-0">
+            Member since {{ user.date_joined|date:"M d, Y" }}<br>
+            Email: {{ user.email|default:"not set" }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ATTEMPTS -->
+    <div class="card dashboard-card p-4 mb-4">
+      <h5 class="mb-3">Recent quiz attempts</h5>
+
+      {% if latest_submissions %}
+      <table class="table table-dark table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Quiz</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sub in latest_submissions %}
+          <tr>
+            <td>{{ sub.quiz.title }}</td>
+            <td>{{ sub.score }}</td>
+            <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-secondary">
+        No attempts yet.  
+        <a href="{% url 'quiz_list' %}" class="text-info">Browse quizzes</a>.
+      </p>
+      {% endif %}
+    </div>
+
+    <!-- SUGGESTED QUIZZES -->
+    <div class="card dashboard-card p-4">
+      <div class="d-flex justify-content-between mb-3">
+        <h5>Suggested quizzes</h5>
+        <a href="{% url 'quiz_list' %}" class="text-info small">View all</a>
+      </div>
+
+      {% if suggested_quizzes %}
+      <div class="row g-3">
+        {% for quiz in suggested_quizzes %}
+        <div class="col-md-6">
+          <div class="card dashboard-card p-3 h-100">
+            <h6>{{ quiz.title }}</h6>
+            <p class="small text-secondary mb-2">
+              Created {{ quiz.created_at|date:"M d, Y" }}
             </p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- SUGGESTED QUIZZES -->
-      <div class="card bg-dark border-secondary">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Suggested quizzes</h5>
-            <a href="{% url 'quiz_list' %}" class="small text-info text-decoration-none">
-              View all
+            <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-primary">
+              Take quiz
             </a>
           </div>
-          {% if suggested_quizzes %}
-            <div class="row g-3">
-              {% for quiz in suggested_quizzes %}
-                <div class="col-md-6">
-                  <div class="card bg-black border-secondary h-100">
-                    <div class="card-body">
-                      <h6 class="card-title">{{ quiz.title }}</h6>
-                      <p class="small text-secondary mb-2">
-                        Created {{ quiz.created_at|date:"M d, Y" }}
-                      </p>
-                      <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-primary">
-                        Take quiz
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <p class="text-secondary mb-0">
-              No new quizzes suggested. Check
-              <a href="{% url 'quiz_list' %}" class="text-info text-decoration-none">
-                all available quizzes
-              </a>.
-            </p>
-          {% endif %}
         </div>
+        {% endfor %}
       </div>
+      {% else %}
+      <p class="text-secondary">
+        No new suggestions.  
+        <a href="{% url 'quiz_list' %}" class="text-info">Browse quizzes</a>.
+      </p>
+      {% endif %}
+    </div>
+
     {% endif %}
   </div>
 
-  <!-- RIGHT COLUMN: QUICK LINKS / INFO -->
+  <!-- RIGHT SIDEBAR -->
   <div class="col-lg-4">
-    <div class="card bg-dark border-secondary mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Quick links</h5>
-        <ul class="list-unstyled mb-0">
-          <li class="mb-2">
-            <a href="{% url 'quiz_list' %}" class="text-info text-decoration-none">
-              🧠 Browse quizzes
-            </a>
-          </li>
-          {% if is_admin %}
-            <li class="mb-2">
-              <a href="{% url 'admin:index' %}" class="text-info text-decoration-none">
-                🛠 Django admin
-              </a>
-            </li>
-          {% endif %}
-          <li class="mb-2">
-            <a href="{% url 'logout' %}" class="text-danger text-decoration-none">
-              ⏏ Logout
-            </a>
-          </li>
-        </ul>
-      </div>
+
+    <div class="card dashboard-card p-4 mb-3">
+      <h5>Quick links</h5>
+      <ul class="list-unstyled mt-3">
+        <li class="mb-2">
+          <a href="{% url 'quiz_list' %}" class="text-info">🧠 Browse quizzes</a>
+        </li>
+
+        {% if is_admin %}
+        <li class="mb-2">
+          <a href="{% url 'admin:index' %}" class="text-info">🛠 QuizQuest administration</a>
+        </li>
+        {% endif %}
+
+        <li>
+          <a href="{% url 'logout' %}" class="text-danger">⏏ Logout</a>
+        </li>
+      </ul>
     </div>
 
-    <div class="card bg-dark border-secondary">
-      <div class="card-body">
-        <h6 class="text-uppercase text-secondary small mb-2">About this project</h6>
-        <p class="small text-secondary mb-1">
-          QuizQuest is a course project built with Django & MySQL to manage quizzes,
-          roles, and user activity.
-        </p>
-        <p class="small text-secondary mb-0">
-          Repository:
-          <a href="https://github.com/wasimassad/QuizQuest-Interactive-Quiz-Learning-System"
-             target="_blank"
-             class="text-info text-decoration-none">
-            GitHub
-          </a>
-        </p>
-      </div>
+    <div class="card dashboard-card p-4">
+      <h6 class="text-uppercase text-secondary small">About this project</h6>
+      <p class="small text-secondary">
+        QuizQuest is a Django + MySQL course project for quiz management.
+      </p>
+      <p class="small text-secondary">
+        Repository:
+        <a href="https://github.com/wasimassad/QuizQuest-Interactive-Quiz-Learning-System"
+           target="_blank"
+           class="text-info">GitHub</a>
+      </p>
     </div>
+
   </div>
 </div>
+
 {% endblock %}
