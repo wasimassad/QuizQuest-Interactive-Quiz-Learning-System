@@ -38,7 +38,7 @@ Relational schema with foreign keys and indexing for efficient data operations
 | Technology                | Usage                            |
 | ------------------------- | -------------------------------- |
 | Django (Python)           | Backend framework & UI templates |
-| MySQL 8.0                 | Relational database management   |
+| SQLite 8.0                 | Relational database management   |
 | HTML / CSS / Bootstrap    | Front-end interface              |
 | GitHub                    | Version control & collaboration  |
 | Gunicorn / Nginx (future) | Deployment                       |
