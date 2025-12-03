@@ -17,13 +17,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ```                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-```
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-!p=!t58%os)mxy3^r!d&p2^c+gy6lm@xsvd2)$ol*kqvp78vj@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["quizquest-interactive-quiz-learning.onrender.com", "localhost", "127.0.0.1"]
 
