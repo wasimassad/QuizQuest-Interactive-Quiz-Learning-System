@@ -3,40 +3,168 @@
 {% block title %}{{ quiz.title }} – Take Quiz{% endblock %}
 
 {% block content %}
+<style>
+  /* Center the main card on the page */
+  .qq-take-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 3rem 1.5rem 4rem;
+  }
+
+  .qq-card {
+      max-width: 900px;
+      width: 100%;
+  }
+
+  /* Question card inside the main card */
+  .qq-question-card {
+      margin-bottom: 1.4rem;
+      padding: 1rem 1.1rem;
+      border-radius: 1rem;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .qq-question-meta {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 0.4rem;
+  }
+
+  .qq-question-text {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 0.6rem;
+  }
+
+  .qq-choice-list {
+      margin-top: 0.2rem;
+  }
+
+  .qq-choice {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+      padding: 0.3rem 0.2rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      transition: background 0.18s ease, color 0.18s ease;
+  }
+
+  .qq-choice-input {
+      accent-color: #60a5fa; /* modern browsers */
+  }
+
+  .qq-choice:hover {
+      background: rgba(37, 99, 235, 0.2);
+      color: #e5e7eb;
+  }
+
+  /* Submit row */
+  .qq-submit-row {
+      margin-top: 1.8rem;
+      display: flex;
+      justify-content: flex-end;
+  }
+
+  /* Primary button – same style as other pages */
+  .qq-btn-primary {
+      padding: 0.8rem 1.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, #60a5fa, #6366f1, #a855f7);
+      background-size: 200% auto;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      position: relative;
+      overflow: hidden;
+  }
+
+  .qq-btn-primary::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+  }
+
+  .qq-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
+      animation: shimmer 2s linear infinite;
+  }
+
+  .qq-btn-primary:hover::before {
+      width: 260px;
+      height: 260px;
+  }
+
+  .qq-btn-primary:active {
+      transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+      .qq-card { padding: 1.6rem 1.4rem 2rem; }
+  }
+</style>
+
+<div class="qq-take-wrapper">
 <section class="qq-card">
     <div class="qq-pill">
         <span class="qq-pill-dot"></span>
         Taking quiz
     </div>
 
-    <h1 class="qq-heading" style="font-size:1.6rem;">{{ quiz.title }}</h1>
+    <h1 class="qq-heading" style="font-size:1.7rem;">{{ quiz.title }}</h1>
     <p class="qq-sub">{{ quiz.description }}</p>
 
-    <form method="post" style="margin-top:1.3rem;">
+    <form method="post" style="margin-top:1.4rem;">
         {% csrf_token %}
 
         {% for question in questions %}
-            <div style="margin-bottom:1.2rem;padding:0.9rem 1rem;border-radius:0.9rem;background:rgba(15,23,42,0.8);border:1px solid rgba(55,65,81,0.8);">
-                <div style="font-size:0.9rem;color:var(--muted);margin-bottom:0.3rem;">
+            <article class="qq-question-card">
+                <div class="qq-question-meta">
                     Question {{ forloop.counter }} • {{ question.points }} point{{ question.points|pluralize }}
                 </div>
-                <div style="margin-bottom:0.5rem;font-weight:500;">{{ question.text }}</div>
+                <div class="qq-question-text">
+                    {{ question.text }}
+                </div>
 
-                {% for choice in question.choices.all %}
-                    <label style="display:block;font-size:0.9rem;margin-top:0.25rem;cursor:pointer;">
-                        <input type="radio"
-                               name="question_{{ question.id }}"
-                               value="{{ choice.id }}"
-                               style="margin-right:0.5rem;">
-                        {{ choice.text }}
-                    </label>
-                {% endfor %}
-            </div>
+                <div class="qq-choice-list">
+                    {% for choice in question.choices.all %}
+                        <label class="qq-choice">
+                            <input
+                                class="qq-choice-input"
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="{{ choice.id }}">
+                            <span>{{ choice.text }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </article>
         {% endfor %}
 
-        <button type="submit" class="qq-btn-primary">
-            Submit quiz
-        </button>
+        <div class="qq-submit-row">
+            <button type="submit" class="qq-btn-primary">
+                Submit quiz
+            </button>
+        </div>
     </form>
 </section>
+</div>
 {% endblock %}
