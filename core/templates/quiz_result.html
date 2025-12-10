@@ -3,39 +3,293 @@
 {% block title %}{{ quiz.title }} – Result{% endblock %}
 
 {% block content %}
-<section class="qq-card">
+<style>
+  /* ---------- Animations (same as quizzes page) ---------- */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: .6; transform: scale(1); }
+    50%     { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* ---------- Page layout & card container ---------- */
+  .qq-result-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 3rem 1.5rem 4rem;
+  }
+
+  .qq-card {
+    max-width: 900px;
+    width: 100%;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(59,130,246,.25), transparent 60%),
+      radial-gradient(circle at 100% 100%, rgba(168,85,247,.15), transparent 60%),
+      rgba(2,6,23,.96);
+    border-radius: 1.6rem;
+    border: 1px solid rgba(96,165,250,.3);
+    backdrop-filter: blur(20px) saturate(180%);
+    padding: 2rem 2.2rem 2.4rem;
+    box-shadow:
+      0 20px 60px rgba(0,0,0,.5),
+      0 0 40px rgba(96,165,250,.15);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp .6s ease-out;
+  }
+  .qq-card::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,
+      rgba(96,165,250,.08),
+      transparent 40%,
+      rgba(168,85,247,.08));
+    opacity:.6;
+    pointer-events:none;
+  }
+  .qq-card::after {
+    content:"";
+    position:absolute;
+    top:-50%; left:-50%;
+    width:200%; height:200%;
+    background:linear-gradient(45deg,
+      transparent 30%,
+      rgba(255,255,255,.02) 50%,
+      transparent 70%);
+    transform:rotate(45deg);
+    animation:shimmer 3s linear infinite;
+    pointer-events:none;
+  }
+  .qq-card > * { position:relative; z-index:1; }
+
+  /* ---------- Pill badge ---------- */
+  .qq-pill {
+    display:inline-flex;
+    align-items:center;
+    gap:.6rem;
+    padding:.5rem 1rem;
+    border-radius:999px;
+    background:linear-gradient(135deg,
+      rgba(37,99,235,.9),
+      rgba(79,70,229,.8));
+    border:1px solid rgba(96,165,250,.3);
+    color:#e0f2fe;
+    font-size:.85rem;
+    font-weight:600;
+    letter-spacing:.02em;
+    box-shadow:
+      0 4px 12px rgba(37,99,235,.4),
+      0 0 20px rgba(96,165,250,.2);
+    margin-bottom:1.5rem;
+  }
+  .qq-pill-dot {
+    width:8px;height:8px;border-radius:50%;
+    background:#10b981;
+    box-shadow:0 0 10px #10b981;
+    animation:pulse 2s ease-in-out infinite;
+  }
+
+  /* ---------- Heading & subtitle ---------- */
+  .qq-heading {
+    font-size:2rem;
+    font-weight:800;
+    margin-bottom:.6rem;
+    background:linear-gradient(135deg,#fff,#60a5fa,#a855f7);
+    background-size:200% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    animation:shimmer 4s linear infinite;
+  }
+  .qq-sub {
+    color:#9ca3af;
+    font-size:.98rem;
+    line-height:1.6;
+    margin-bottom:0;
+  }
+
+  /* ---------- KPI cards grid ---------- */
+  .qq-kpi-grid {
+      margin-top:1.8rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:1.5rem;
+  }
+
+  .qq-kpi {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(59,130,246,.2), transparent 60%),
+      rgba(2,6,23,.9);
+    border:1px solid rgba(96,165,250,.3);
+    border-radius:1.2rem;
+    padding:1.4rem 1.6rem;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 30px rgba(0,0,0,.4);
+    animation:fadeInUp .6s ease-out both;
+  }
+  .qq-kpi-label {
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:#60a5fa;
+    font-weight:600;
+    margin-bottom:.4rem;
+  }
+  .qq-kpi-value {
+    font-size:1.3rem;
+    font-weight:700;
+    color:#f9fafb;
+    margin-bottom:.3rem;
+  }
+  .qq-kpi-description {
+    margin-top:.5rem;
+    font-size:.88rem;
+    color:#9ca3af;
+    line-height:1.5;
+  }
+
+  /* small status pill */
+  .qq-kpi-pill {
+    display:inline-flex;
+    align-items:center;
+    gap:.3rem;
+    margin-top:.6rem;
+    padding:.25rem .7rem;
+    border-radius:999px;
+    background:rgba(16,185,129,.12);
+    border:1px solid rgba(16,185,129,.7);
+    color:#bbf7d0;
+    font-size:.75rem;
+    font-weight:500;
+  }
+  .qq-kpi-pill::before {
+    content:"●";
+    font-size:.55rem;
+    color:#22c55e;
+  }
+
+  /* ---------- Buttons row ---------- */
+  .qq-row {
+    margin-top:2.2rem;
+    display:flex;
+    justify-content:flex-end;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+
+  .qq-btn-ghost {
+    padding:.75rem 1.25rem;
+    font-size:.9rem;
+    font-weight:600;
+    border-radius:.75rem;
+    border:1px solid rgba(148,163,184,.6);
+    background:rgba(15,23,42,.9);
+    color:#e5e7eb;
+    cursor:pointer;
+    transition:all .25s ease;
+    box-shadow:0 4px 14px rgba(15,23,42,.7);
+  }
+  .qq-btn-ghost:hover {
+    background:rgba(30,64,175,.85);
+    border-color:rgba(129,140,248,.9);
+    transform:translateY(-1px);
+    box-shadow:0 10px 24px rgba(15,23,42,.9);
+  }
+
+  /* primary button (same style as quizzes page) */
+  .qq-btn-primary {
+    padding:.75rem 1.6rem;
+    font-size:.9rem;
+    font-weight:600;
+    border-radius:.75rem;
+    border:1px solid rgba(255,255,255,.1);
+    background:linear-gradient(135deg,#60a5fa,#6366f1,#a855f7);
+    background-size:200% auto;
+    color:#fff;
+    cursor:pointer;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 4px 12px rgba(37,99,235,.4);
+    position:relative;
+    overflow:hidden;
+  }
+  .qq-btn-primary::before {
+    content:"";
+    position:absolute;
+    top:50%; left:50%;
+    width:0; height:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.2);
+    transform:translate(-50%,-50%);
+    transition:width .6s,height .6s;
+  }
+  .qq-btn-primary:hover {
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(37,99,235,.6);
+    animation:shimmer 2s linear infinite;
+  }
+  .qq-btn-primary:hover::before {
+    width:260px; height:260px;
+  }
+  .qq-btn-primary:active {
+    transform:translateY(0);
+  }
+
+  @media (max-width:768px){
+    .qq-card { padding:1.6rem 1.4rem 2rem; }
+    .qq-heading { font-size:1.6rem; }
+    .qq-row { justify-content:stretch; }
+    .qq-row a { flex:1 1 100%; }
+    .qq-row button { width:100%; }
+  }
+</style>
+
+<div class="qq-result-wrapper">
+  <section class="qq-card">
     <div class="qq-pill">
-        <span class="qq-pill-dot"></span>
-        Quiz result
+      <span class="qq-pill-dot"></span>
+      Quiz result
     </div>
 
-    <h1 class="qq-heading" style="font-size:1.7rem;">{{ quiz.title }}</h1>
+    <h1 class="qq-heading">{{ quiz.title }}</h1>
     <p class="qq-sub">
-        Great job, {{ request.user.first_name|default:request.user.username }}!
-        Here is your result for this quiz.
+      Great job, {{ request.user.first_name|default:request.user.username }}!
+      Here is your result for this quiz.
     </p>
 
-    <div class="qq-kpi-grid" style="margin-top:1.4rem;">
-        <div class="qq-kpi">
-            <div class="qq-kpi-label">Score</div>
-            <div class="qq-kpi-value">{{ submission.score }}</div>
-            <div class="qq-kpi-pill">Recorded successfully</div>
+    <div class="qq-kpi-grid">
+      <article class="qq-kpi">
+        <div class="qq-kpi-label">Score</div>
+        <div class="qq-kpi-value">{{ submission.score }}</div>
+        <div class="qq-kpi-pill">Recorded successfully</div>
+      </article>
+
+      <article class="qq-kpi">
+        <div class="qq-kpi-label">Submitted at</div>
+        <div class="qq-kpi-value" style="font-size:0.98rem;">
+          {{ submission.submitted_at }}
         </div>
-        <div class="qq-kpi">
-            <div class="qq-kpi-label">Submitted at</div>
-            <div class="qq-kpi-value" style="font-size:0.92rem;">
-                {{ submission.submitted_at }}
-            </div>
-        </div>
+        <p class="qq-kpi-description">
+          Your submission time is stored securely in the system.
+        </p>
+      </article>
     </div>
 
-    <div class="qq-row" style="margin-top:1.6rem;">
-        <a href="{% url 'quiz_list' %}">
-            <button class="qq-btn-ghost">Back to quizzes</button>
-        </a>
-        <a href="{% url 'dashboard' %}">
-            <button class="qq-btn-primary">Return to dashboard</button>
-        </a>
+    <div class="qq-row">
+      <a href="{% url 'quiz_list' %}">
+        <button type="button" class="qq-btn-ghost">Back to quizzes</button>
+      </a>
+      <a href="{% url 'dashboard' %}">
+        <button type="button" class="qq-btn-primary">Return to dashboard</button>
+      </a>
     </div>
-</section>
+  </section>
+</div>
 {% endblock %}

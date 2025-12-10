@@ -3,39 +3,144 @@
 {% block title %}Admin Dashboard – QuizQuest{% endblock %}
 
 {% block content %}
+<style>
+    /* Wrapper to center the card like other pages */
+    .qq-admin-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 3rem 1.5rem 4rem;
+    }
+
+    .qq-card {
+        max-width: 900px;
+        width: 100%;
+    }
+
+    /* KPI GRID */
+    .qq-kpi-grid {
+        margin-top: 1.8rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.3rem;
+    }
+
+    /* KPI CARD */
+    .qq-kpi {
+        background: rgba(2, 6, 23, 0.85);
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        padding: 1.3rem 1.4rem;
+        border-radius: 1rem;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease both;
+    }
+
+    .qq-kpi:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(96, 165, 250, 0.35);
+        border-color: rgba(96,165,250,0.5);
+    }
+
+    .qq-kpi-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #60a5fa;
+        margin-bottom: 0.45rem;
+        font-weight: 600;
+    }
+
+    .qq-kpi-value {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #f9fafb;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Button layout */
+    .qq-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* Ghost button to match theme */
+    .qq-btn-ghost {
+        padding: 0.75rem 1.4rem;
+        font-size: 0.9rem;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.05);
+        border-radius: 0.8rem;
+        color: #e5e7eb;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .qq-btn-ghost:hover {
+        background: rgba(255,255,255,0.12);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .qq-row {
+            flex-direction: column;
+            width: 100%;
+        }
+        .qq-btn-primary, .qq-btn-ghost {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="qq-admin-wrapper">
 <section class="qq-card">
+
     <div class="qq-pill">
         <span class="qq-pill-dot"></span>
         Admin overview
     </div>
 
-    <h1 class="qq-heading" style="font-size:1.6rem;">Admin dashboard</h1>
+    <h1 class="qq-heading" style="font-size:1.7rem;">Admin dashboard</h1>
     <p class="qq-sub">
-        Manage quizzes, review student activity, and jump to Django admin tools.
+        Manage quizzes, review student activity, and access Django admin tools.
     </p>
 
+    <!-- KPI GRID -->
     <div class="qq-kpi-grid">
         <div class="qq-kpi">
             <div class="qq-kpi-label">Total quizzes</div>
-            <div class="qq-kpi-value">{{ total_quizzes|default:"-" }}</div>
+            <div class="qq-kpi-value">{{ total_quizzes|default:"0" }}</div>
         </div>
+
         <div class="qq-kpi">
             <div class="qq-kpi-label">Total submissions</div>
-            <div class="qq-kpi-value">{{ total_submissions|default:"-" }}</div>
+            <div class="qq-kpi-value">{{ total_submissions|default:"0" }}</div>
         </div>
+
         <div class="qq-kpi">
             <div class="qq-kpi-label">Registered users</div>
-            <div class="qq-kpi-value">{{ total_users|default:"-" }}</div>
+            <div class="qq-kpi-value">{{ total_users|default:"0" }}</div>
         </div>
     </div>
 
-    <div class="qq-row" style="margin-top:1.6rem;">
+    <!-- BUTTON ROW -->
+    <div class="qq-row">
         <a href="/admin/">
             <button class="qq-btn-primary">Open Django admin</button>
         </a>
+
         <a href="{% url 'quiz_list' %}">
             <button class="qq-btn-ghost">View public quizzes</button>
         </a>
     </div>
+
 </section>
+</div>
+
 {% endblock %}

@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!p=!t58%os)mxy3^r!d&p2^c+gy6lm@xsvd2)$ol*kqvp78vj@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["quizquest-interactive-quiz-learning.onrender.com", "localhost", "127.0.0.1"]
 
@@ -31,13 +31,14 @@ ALLOWED_HOSTS = ["quizquest-interactive-quiz-learning.onrender.com", "localhost"
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+    
 ]
 
 STATIC_URL = 'static/'
@@ -60,7 +61,7 @@ ROOT_URLCONF = 'quizquest.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'templates' ],  # <-- this line matters
+        'DIRS': [ BASE_DIR / 'templates' ],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

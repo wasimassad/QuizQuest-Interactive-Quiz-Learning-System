@@ -1,133 +1,557 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
 {% block extrastyle %}
 {{ block.super }}
 <style>
+  /* ==================== ANIMATIONS ==================== */
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-30px) translateX(20px);
+    }
+    66% {
+      transform: translateY(-10px) translateX(-15px);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 
+        0 26px 65px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(96, 165, 250, 0.3),
+        0 0 40px rgba(96, 165, 250, 0.2);
+    }
+    50% {
+      box-shadow: 
+        0 30px 75px rgba(15,23,42,0.98),
+        0 0 0 1px rgba(96, 165, 250, 0.5),
+        0 0 60px rgba(96, 165, 250, 0.4),
+        0 0 100px rgba(168, 85, 247, 0.2);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ==================== RESET & GLOBAL ==================== */
+  html,
   body.login {
-      background: radial-gradient(circle at top left, #1d4ed8, #020617 55%, #000 100%);
-      color: #e5e7eb;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
+  /* Hide default Django elements */
+  body.login #header,
+  body.login #nav-sidebar,
+  body.login #content-related,
+  body.login .breadcrumbs,
+  body.login #content h1,
+  body.login #toggle-nav-sidebar {
+    display: none !important;
+  }
+
+  body.login #container,
+  body.login #content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ==================== ANIMATED BACKGROUND ==================== */
+  body.login {
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.15) 0%, transparent 70%),
+      linear-gradient(135deg, #020617 0%, #0b1120 50%, #1e1b4b 100%);
+    background-size: 400% 400%;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    animation: gradientShift 20s ease infinite;
+    position: relative;
+  }
+
+  body.login::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(96, 165, 250, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 40% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 35%);
+    pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  body.login::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pulse 8s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  /* ==================== LAYOUT WRAPPER ==================== */
   .qq-admin-login-wrapper {
-      min-height: calc(100vh - 60px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem 3rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
   }
 
+  /* ==================== LOGIN CARD ==================== */
   .qq-admin-login-card {
-      width: 100%;
-      max-width: 430px;
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 1.1rem;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.7);
-      padding: 2.2rem 2.4rem 2rem;
-      backdrop-filter: blur(16px);
+    width: 100%;
+    max-width: 540px;
+    background: 
+      radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.35), transparent 60%),
+      radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.2), transparent 60%),
+      rgba(2, 6, 23, 0.96);
+    border-radius: 2rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow:
+      0 26px 65px rgba(15, 23, 42, 0.95),
+      0 0 0 1px rgba(96, 165, 250, 0.3),
+      0 0 40px rgba(96, 165, 250, 0.2);
+    padding: 2.7rem 2.7rem 2.5rem;
+    backdrop-filter: blur(25px) saturate(180%);
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.6s ease-out, glow 4s ease-in-out infinite;
   }
 
-  .qq-admin-login-header h1 {
-      font-size: 1.6rem;
-      font-weight: 650;
-      margin-bottom: .25rem;
-      color: #eef2ff;
+  .qq-admin-login-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+      rgba(96, 165, 250, 0.08), 
+      transparent 40%,
+      rgba(168, 85, 247, 0.08));
+    opacity: 0.6;
+    pointer-events: none;
   }
 
-  .qq-admin-login-header p {
-      margin: 0;
-      font-size: .9rem;
-      color: #9ca3af;
+  .qq-admin-login-card::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.03) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s linear infinite;
+    pointer-events: none;
+  }
+
+  /* ==================== TOP META ROW ==================== */
+  .qq-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.3rem;
+    position: relative;
+    z-index: 1;
   }
 
   .qq-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      padding: .2rem .6rem;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.16);
-      color: #e0f2fe;
-      font-size: .75rem;
-      margin-bottom: .75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(79, 70, 229, 0.8));
+    border: 1px solid rgba(191, 219, 254, 0.3);
+    color: #e0f2fe;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+    box-shadow: 
+      0 4px 12px rgba(37, 99, 235, 0.4),
+      0 0 20px rgba(96, 165, 250, 0.2);
+    transition: all 0.3s ease;
   }
 
+  .qq-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+      0 6px 16px rgba(37, 99, 235, 0.5),
+      0 0 30px rgba(96, 165, 250, 0.3);
+  }
+
+  .qq-badge-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(191, 219, 254, 0.5);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    background: rgba(15, 23, 42, 0.9);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  .qq-meta-env {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .qq-meta-env::before {
+    content: "●";
+    color: #10b981;
+    font-size: 0.6rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ==================== HEADER ==================== */
+  .qq-admin-login-header h1 {
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    color: #f9fafb;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #ffffff, #60a5fa, #a855f7);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 4s linear infinite;
+    text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+  }
+
+  .qq-admin-login-header p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #9ca3af;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ==================== ERROR BOX ==================== */
   .qq-errornote {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(248, 113, 113, 0.7);
-      color: #fecaca;
-      border-radius: .6rem;
-      padding: .6rem .75rem;
-      font-size: .85rem;
-      margin: 1rem 0;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(236, 72, 153, 0.1));
+    border: 1px solid rgba(248, 113, 113, 0.6);
+    color: #fca5a5;
+    border-radius: 0.9rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.88rem;
+    margin: 1.3rem 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(248, 113, 113, 0.15);
+    animation: slideIn 0.4s ease-out;
   }
 
+  /* ==================== FORM ROWS ==================== */
   .qq-form-row {
-      margin-bottom: 1rem;
+    margin-bottom: 1.1rem;
+    position: relative;
+    z-index: 1;
   }
 
   .qq-form-row label {
-      display: block;
-      font-size: .85rem;
-      margin-bottom: .35rem;
-      color: #d1d5db;
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.45rem;
+    color: #d1d5db;
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .qq-form-row input[type="text"],
   .qq-form-row input[type="password"] {
-      width: 100%;
-      padding: .55rem .7rem;
-      border-radius: .6rem;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      background: #020617;
-      color: #e5e7eb;
-      font-size: .9rem;
-      outline: none;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(2, 6, 23, 0.8);
+    color: #e5e7eb;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .qq-form-row input[type="text"]::placeholder,
+  .qq-form-row input[type="password"]::placeholder {
+    color: #6b7280;
   }
 
   .qq-form-row input:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
+    border-color: #60a5fa;
+    background: rgba(2, 6, 23, 0.95);
+    box-shadow: 
+      0 0 0 3px rgba(59, 130, 246, 0.15),
+      0 4px 12px rgba(96, 165, 250, 0.25);
+    transform: translateY(-2px);
   }
 
+  .qq-form-row input:hover:not(:focus) {
+    border-color: rgba(148, 163, 184, 0.7);
+    background: rgba(2, 6, 23, 0.9);
+  }
+
+  /* ==================== SUBMIT ROW ==================== */
   .qq-submit-row {
-      margin-top: 1.4rem;
-      text-align: right;
+    margin-top: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .qq-hint {
+    font-size: 0.8rem;
+    color: #6b7280;
+    line-height: 1.4;
   }
 
   .qq-submit-row input[type="submit"] {
-      padding: .55rem 1.6rem;
-      border-radius: .8rem;
-      border: none;
-      font-size: .9rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #38bdf8, #6366f1);
-      color: #0b1120;
-      cursor: pointer;
+    padding: 0.85rem 2.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.98rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #60a5fa, #6366f1, #a855f7);
+    background-size: 200% auto;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    box-shadow: 
+      0 8px 20px rgba(37, 99, 235, 0.4),
+      0 0 30px rgba(96, 165, 250, 0.2);
+    position: relative;
+    overflow: hidden;
   }
 
-  #content-main { padding-top: 0; }
+  .qq-submit-row input[type="submit"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .qq-submit-row input[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 12px 32px rgba(37, 99, 235, 0.6),
+      0 0 50px rgba(96, 165, 250, 0.4);
+    animation: shimmer 2s linear infinite;
+  }
+
+  .qq-submit-row input[type="submit"]:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .qq-submit-row input[type="submit"]:active {
+    transform: translateY(-1px);
+    box-shadow: 
+      0 4px 12px rgba(37, 99, 235, 0.4),
+      0 0 30px rgba(96, 165, 250, 0.3);
+  }
+
+  /* ==================== FOOTER ==================== */
+  .qq-footer {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .qq-footer span strong {
+    color: #9ca3af;
+    font-weight: 600;
+    background: linear-gradient(135deg, #60a5fa, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .qq-footer-links {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  .qq-footer-links span {
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 640px) {
+    .qq-admin-login-wrapper {
+      padding: 2rem 1rem;
+    }
+
+    .qq-admin-login-card {
+      padding: 2.1rem 1.6rem 1.9rem;
+      max-width: 100%;
+    }
+
+    .qq-admin-login-header h1 {
+      font-size: 1.7rem;
+    }
+
+    .qq-submit-row {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+
+    .qq-submit-row input[type="submit"] {
+      width: 100%;
+      text-align: center;
+    }
+
+    .qq-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+  }
+
+  /* ==================== ACCESSIBILITY ==================== */
+  *:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="qq-admin-login-wrapper">
   <div class="qq-admin-login-card">
+    <div class="qq-meta-row">
+      <div class="qq-badge">
+        <span class="qq-badge-icon">⚙</span>
+        <span>QuizQuest Admin</span>
+      </div>
+      <div class="qq-meta-env">
+        Production • Secure login
+      </div>
+    </div>
+
     <div class="qq-admin-login-header mb-3">
-      <div class="qq-badge">⚙ QuizQuest Admin</div>
       <h1>Sign in to your admin panel</h1>
-      <p>Manage quizzes, questions, users & results.</p>
+      <p>Manage quizzes, questions, users &amp; results from one place.</p>
     </div>
 
     {% if form.errors %}
       <div class="qq-errornote">
-        Please enter the correct username and password.
+        Please enter the correct username and password. Note that they are case-sensitive.
       </div>
     {% endif %}
 
-    <form action="{{ form_url }}" method="post" id="login-form">{% csrf_token %}
+    <form action="{{ form_url }}" method="post" id="login-form">
+      {% csrf_token %}
+
       <div class="qq-form-row">
         <label for="{{ form.username.id_for_label }}">Username</label>
         {{ form.username }}
@@ -139,13 +563,25 @@
       </div>
 
       {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+        <input type="hidden"
+               name="{{ redirect_field_name }}"
+               value="{{ redirect_field_value }}">
       {% endif %}
 
       <div class="qq-submit-row">
+        <div class="qq-hint">
+          Use your staff / superuser credentials to access QuizQuest admin.
+        </div>
         <input type="submit" value="Log in">
       </div>
     </form>
+
+    <div class="qq-footer">
+      <span>© {{ now|date:"Y" }} <strong>QuizQuest</strong>. All rights reserved.</span>
+      <div class="qq-footer-links">
+        <span>Status: Online</span>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
