@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!p=!t58%os)mxy3^r!d&p2^c+gy6lm@xsvd2)$ol*kqvp78vj@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["quizquest-interactive-quiz-learning.onrender.com", "localhost", "127.0.0.1"]
 
